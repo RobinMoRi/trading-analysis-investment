@@ -31,3 +31,11 @@ pip install -r requirements.txt
 jupyter notebook
 ```
 Open file IBStrategy.ipynb in browser
+
+### Execute api
+```sh
+uvicorn main:app --reload
+```
+
+### Automatic docs (swagger)
+Go to http://127.0.0.1:8000/docs
