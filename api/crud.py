@@ -34,8 +34,8 @@ def get_asset_values(db: Session, skip: int = 0, limit: int = 100):
 
 def create_company(db: Session, company: companySchema.Company):
     db_company = models.Company(ticker=company.ticker, yf_ticker=company.yf_ticker, url=company.url, html_element=company.html_element, price=0.0, \
-                                reported_type='', reported_val='', reported_weight=0.0, reported_position=0.0, reported_buy=0.0, \
-                                computed_type='', computed_val='', computed_weight=0.0, computed_position=0.0, computed_buy=0.0)
+                                reported_type='', reported_val=0.0, reported_weight=0.0, reported_position=0.0, reported_buy=0.0, \
+                                computed_type='', computed_val=0.0, computed_weight=0.0, computed_position=0.0, computed_buy=0.0)
     db.add(db_company)
     db.commit()
     db.refresh(db_company)
@@ -52,4 +52,12 @@ def update_asset_values(db: Session, asset_values):
         db.query(models.Company).filter(models.Company.yf_ticker == val['yf_ticker']). \
             update({'reported_val': val['reported_val'], 'reported_type': val['reported_type'], \
                     'computed_val': val['computed_val'], 'computed_type': val['computed_type'] })
+    db.commit()
+
+def update_positions(db: Session, positions):
+    for val in positions:
+        db.query(models.Company).filter(models.Company.yf_ticker == val['yf_ticker']). \
+            update({'reported_weight': val['reported_weight'], 'computed_weight': val['computed_weight'], \
+                    'reported_position': val['reported_position'], 'computed_position': val['computed_position'], \
+                    'reported_buy': val['reported_buy'], 'computed_buy': val['computed_buy'] })
     db.commit()

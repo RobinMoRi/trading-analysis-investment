@@ -95,6 +95,7 @@ def create_asset_values(html_pages, companies):
         asset_values.append(temp)
     return asset_values
 
+# TODO: clean this one up a bit..
 def compute_positions(portfolio_size, asset_values, prices):
     prices_dict = convert_prices(prices)
     positions = []
