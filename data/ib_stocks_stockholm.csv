@@ -1,11 +1,7 @@
 Ticker,URL_PATH,ELEMENT_NAME
 BURE,company/BURE,
-AJA B,aja,app-aja-current-rebate-premium
 CRED A,company/CRED A,
 FASTAT,company/FASTAT,
-FIRST B,firstventure,app-first-venture-current-rebate-premium
-FLAT B,flatcapital,app-flat-capital-current-rebate-premium
-HAV B,company/HAV B,
 INDU C,company/INDU C,
 INVE B,company/INVE B,
 KDEV,company/KDEV,
@@ -14,7 +10,6 @@ LATO B,company/LATO B,
 LINC,company/LINC,
 LUND B,company/LUND B,
 NAXS,company/NAXS,
-NAIG B,nordicasia,app-nordic-asia-current-rebate-premium
 SVOL B,company/SVOL B,
 TRAC B,company/TRAC B,
 VEFAB,vef,app-vef-current-rebate-premium
