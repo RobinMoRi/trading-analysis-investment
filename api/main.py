@@ -9,6 +9,8 @@ import ibindex, crud
 from schemas.company import Company, CompanyCreate
 from schemas.price import Price
 from schemas.assetvalue import AssetValue
+from db.models.netassetvalue import AssetType
+from db.models.netassetvalue import ValueType
 # import models.models as models
 # import schemas.company as companySchema
 # import schemas.price as priceSchema
@@ -69,15 +71,21 @@ def update_asset_values(db: Session = Depends(get_db)):
     result = []
     for nva in net_asset_values:
         db_company = crud.get_company_by_ticker(db, ticker=nva['ticker'])
-        asset_value = crud.create_company_assetvalue(db, nva, db_company.id)
+        db_asset_value = crud.get_asset_value_by_type(db, nva['value_type'], db_company.id)
+        if db_asset_value:
+            crud.update_company_assetvalue(db, nva, db_asset_value.id)
+            db_asset_value = crud.get_asset_value_by_type(db, nva['value_type'], db_company.id) #Get updated row
+            asset_value = db_asset_value
+        else:
+            asset_value = crud.create_company_assetvalue(db, nva, db_company.id)
         result.append(asset_value)
     return result
 
-# # Read db prices (not live data - only since last update)
-# @app.get("/companies/asset-values", response_model=List[assetvalueSchema.AssetValue])
-# def get_asset_values(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#     asset_values = crud.get_asset_values(db, skip=skip, limit=limit)
-#     return asset_values
+# Read db prices (not live data - only since last update)
+@app.get("/companies/asset-values", response_model=List[AssetValue])
+def get_asset_values(asset_type: str = '', value_type: str = '', skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    asset_values = crud.get_asset_values(db, asset_type=asset_type, value_type=value_type, skip=skip, limit=limit)
+    return asset_values
 
 
 # @app.post("/companies/positions", response_model=List[positionSchema.Position])

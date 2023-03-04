@@ -1,5 +1,6 @@
 from typing import List
-
+from db.models.netassetvalue import AssetType
+from db.models.netassetvalue import ValueType
 from sqlalchemy.orm import Session
 
 # import models.models as models
@@ -35,31 +36,25 @@ def create_company_assetvalue(db: Session, asset_value: AssetValueCreate, compan
     db.refresh(db_net_asset_value)
     return db_net_asset_value
 
-# ## TOOD: Clean this solution up... must be a better way
-# def get_asset_values(db: Session, skip: int = 0, limit: int = 100):
-    # asset_values = db.query(models.Company.yf_ticker, \
-    #                 models.Company.reported_val, models.Company.reported_type, \
-    #                 models.Company.computed_val, models.Company.computed_type).offset(skip).limit(limit).all()
-    # arr = []
-    # for row in asset_values:
-    #     temp = {}
-    #     temp['yf_ticker'] = row[0]
-    #     temp['reported_val'] = float(row[1])
-    #     temp['reported_type'] = row[2]
-    #     temp['computed_val'] = float(row[3])
-    #     temp['computed_type'] = row[4]
-    #     arr.append(temp)
-    # return arr
+def update_company_assetvalue(db: Session, asset_value: AssetValueCreate, asset_value_id: int):
+    db_net_asset_value = navModel(**asset_value)
+    db.query(navModel).filter(navModel.id == asset_value_id).update({'val': db_net_asset_value.val, 'asset_type': db_net_asset_value.asset_type})
+    db.commit()
+    return db_net_asset_value
 
+def get_asset_value_by_type(db: Session, value_type: ValueType, company_id: int):
+    return db.query(navModel).filter(navModel.value_type == value_type, navModel.company_id == company_id).first()
 
+def get_asset_values(db: Session, asset_type: AssetType, value_type: ValueType, skip: int = 0, limit: int = 100):
+    queryset = db.query(navModel)
 
+    if(asset_type != ''):
+        queryset = queryset.filter(navModel.asset_type == asset_type)
 
-# def update_asset_values(db: Session, asset_values):
-#     for val in asset_values:
-#         db.query(models.Company).filter(models.Company.yf_ticker == val['yf_ticker']). \
-#             updaxte({'reported_val': val['reported_val'], 'reported_type': val['reported_type'], \
-#                     'computed_val': val['computed_val'], 'computed_type': val['computed_type'] })
-#     db.commit()
+    if(value_type != ''):
+        queryset = queryset.filter(navModel.value_type == value_type)
+
+    return queryset.offset(skip).limit(limit).all()
 
 # def update_positions(db: Session, positions):
 #     for val in positions:
