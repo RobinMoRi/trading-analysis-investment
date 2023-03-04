@@ -1,11 +1,19 @@
 from pydantic import BaseModel
+from db.models.netassetvalue import AssetType
+from db.models.netassetvalue import ValueType
 
-class AssetValue(BaseModel):
-    yf_ticker: str
-    reported_val: float
-    reported_type: str
-    computed_val: float
-    computed_type: str
+
+class AssetValueBase(BaseModel):
+    ticker: str
+    val: float
+    value_type: ValueType
+    asset_type: AssetType
+
+class AssetValue(AssetValueBase):
+    id: int
 
     class Config:
         orm_mode = True
+
+class AssetValueCreate(AssetValueBase):
+    pass
