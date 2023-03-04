@@ -5,3 +5,4 @@ data/
 geckodriver.log
 /.ipynb_checkpoints
 *.db
+*.ipynb

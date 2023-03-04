@@ -5,47 +5,46 @@ from selenium import webdriver
 from requests.utils import quote
 import requests
 import time
+from datetime import datetime
 
 import lxml.html as lh
 import re
 
 DATA_PATH = '../data/ib_stocks_stockholm.csv'
 
-# Read companies from csv file
-def read_companies():
-    # Read df and set nan to empty string
-    stocks_df = pd.read_csv(DATA_PATH)
-    stocks_df.fillna('', inplace=True)
-
-    # Comply with format of yahoo finance for swedish stocks
-    stocks_df['Ticker YF'] = stocks_df['Ticker'].str.replace(' ', '-')
-    stocks_df['Ticker YF'] = stocks_df['Ticker'].astype(str) + '.ST'
-    stocks_list_yf = stocks_df['Ticker'].tolist()
-
-    # Return companies list
-    companies = []
-    for index, row in stocks_df.iterrows():
-        temp = {}
-        temp["ticker"] = row['Ticker']
-        temp["yf_ticker"] = row['Ticker YF'].replace(' ', '-')
-        temp["url"] = row['URL_PATH']
-        temp["html_element"] = row['ELEMENT_NAME']
-        companies.append(temp)
-
-    return companies
-
 def read_companies_ibindex_api():
     resp = requests.get("https://ibindex.se/ibi//index/getProducts.req")
     companies = []
     for el in resp.json():
-        print(el)
         temp = {}
         temp["ticker"] = el['product']
         temp["yf_ticker"] = el['product'].replace(' ', '-') + '.ST'
-        temp["url"] = 'placeholder'
-        temp["html_element"] = 'placeholder'
+        temp["name"] = el['productName']
+        temp["price"] = 0.0 #init price (using yahoo finance to fetch price)
         companies.append(temp)
     return companies
+
+def read_asset_values_ibindex_api():
+    resp = requests.get("https://ibindex.se/ibi//index/getProducts.req")
+    nva = []
+    for el in resp.json():
+        #Computed
+        temp = {}
+        temp["ticker"] = el['product']
+        temp["val"] = abs(el['netAssetValueCalculatedRebatePremium'])
+        temp["value_type"] = 'computed'
+        temp["asset_type"] = 'rebate' if el['netAssetValueCalculatedRebatePremium'] > 0 else 'premium'
+        nva.append(temp)
+
+        #Reported
+        temp = {}
+        temp["ticker"] = el['product']
+        temp["val"] = abs(el['netAssetValueRebatePremium'])
+        temp["value_type"] = 'reported'
+        temp["asset_type"] = 'rebate' if el['netAssetValueRebatePremium'] > 0 else 'premium'
+        nva.append(temp)
+
+    return nva
 
 # Get live prices from yahoo finance api
 def get_prices(companies):
@@ -53,7 +52,12 @@ def get_prices(companies):
     for company in companies:
         temp = {}
         temp['yf_ticker'] = company.yf_ticker
-        temp['price'] =  get_live_price(company.yf_ticker)
+        try:
+            temp['price'] =  get_live_price(company.yf_ticker)
+            temp['price_updated_at'] = datetime.now()
+        except:
+            temp['price'] = None
+            temp['price_updated_at'] = None
         prices.append(temp)
     return prices
 
