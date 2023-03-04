@@ -1,3 +1,4 @@
-/env
+**/env
 geckodriver.log
 /.ipynb_checkpoints
+*.db

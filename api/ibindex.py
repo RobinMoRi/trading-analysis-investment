@@ -3,6 +3,7 @@ import json
 from yahoo_fin.stock_info import get_live_price
 from selenium import webdriver
 from requests.utils import quote
+import requests
 import time
 
 import lxml.html as lh
@@ -31,6 +32,19 @@ def read_companies():
         temp["html_element"] = row['ELEMENT_NAME']
         companies.append(temp)
 
+    return companies
+
+def read_companies_ibindex_api():
+    resp = requests.get("https://ibindex.se/ibi//index/getProducts.req")
+    companies = []
+    for el in resp.json():
+        print(el)
+        temp = {}
+        temp["ticker"] = el['product']
+        temp["yf_ticker"] = el['product'].replace(' ', '-') + '.ST'
+        temp["url"] = 'placeholder'
+        temp["html_element"] = 'placeholder'
+        companies.append(temp)
     return companies
 
 # Get live prices from yahoo finance api
