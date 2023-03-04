@@ -1,6 +1,7 @@
 # Secret file
 env/
 data/
+.ipynb_checkpoints/
 geckodriver.log
 /.ipynb_checkpoints
 *.db
