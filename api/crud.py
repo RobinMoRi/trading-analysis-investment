@@ -2,7 +2,7 @@ from typing import List
 
 from sqlalchemy.orm import Session
 
-import models
+import models.models as models
 import schemas.company as companySchema
 import schemas.price as priceSchema
 

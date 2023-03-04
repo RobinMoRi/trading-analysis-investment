@@ -34,6 +34,7 @@ Open file IBStrategy.ipynb in browser
 
 ### Execute api
 ```sh
+cd api
 uvicorn main:app --reload
 ```
 
