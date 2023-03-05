@@ -17,3 +17,4 @@ class Company(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     netassetvalues = relationship('NetAssetValue', back_populates='company')
+    positions = relationship('Position', back_populates='company')
