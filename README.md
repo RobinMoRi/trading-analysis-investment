@@ -1,42 +1,43 @@
 # trading-analysis-investment
-IB - viktad fördelning med hänsyn till störst substansrabatt. 
+API and APP for analysing swedish investment companies
 
 ## Prerequisites
-- Python 3.8
+- Python >= 3.8
 - pip
-- Jupyter notebook
+- ~~Jupyter notebook~~ DEPRECATED
+-  [Virtual environment wrapper installing instructions](https://virtualenvwrapper.readthedocs.io/en/latest/install.html) 
 ```sh
-pip install notebook
-```
--  [Virtual environment](https://docs.python.org/3/library/venv.html) 
--  [https://queirozf.com/entries/jupyter-kernels-how-to-add-change-remove](Create jupyter env kernel)
-```sh
-python3 -m venv env
+## Install virtual environment wrapper using pip (setup shell startup according to installing instructions)
+pip install virtualenvwrapper
+
+## create virtualenvwrapper
+mkvirtualenv venv
+
+## run virtualenvironment
+workon venv
+
+## quit virtualenv
+deactivate venv
 ```
 
 ## Installing
-### Run virtual environment (mac)
-```sh
-cd <path/to/directory>
-source env/bin/activate
-```
-
 ### Install all dependancies in venv
 ```sh
+workon venv
 pip install -r requirements.txt
 ```
-
-### Run jupyter notebook
-```sh
-jupyter notebook
-```
-Open file IBStrategy.ipynb in browser
 
 ### Execute api
 ```sh
 cd api
 uvicorn main:app --reload
 ```
-
-### Automatic docs (swagger)
+### Automatic api docs (swagger)
 Go to http://127.0.0.1:8000/docs
+
+### Run app
+```sh
+cd app
+npm install
+npm run dev
+```
