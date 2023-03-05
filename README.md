@@ -35,6 +35,8 @@ uvicorn main:app --reload
 ### Automatic api docs (swagger)
 Go to http://127.0.0.1:8000/docs
 
+[Latest database model can be found here](https://robinmori.github.io/trading-analysis-investment/embed.html)
+
 ### Run app
 ```sh
 cd app
