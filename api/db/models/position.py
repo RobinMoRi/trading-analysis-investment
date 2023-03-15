@@ -17,6 +17,7 @@ class Position(Base):
     buy = Column(Float, unique=False, index=True)
     value_type = Column(Enum(ValueType), unique=False)
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+    netassetvalue_id = Column(Integer, ForeignKey("net_asset_values.id"), nullable=False)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

@@ -1,5 +1,5 @@
 from typing import List
-
+import logging
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 from db.database import SessionLocal, engine

@@ -1,3 +1,4 @@
+import logging
 from typing import List
 from db.models.netassetvalue import AssetType
 from db.models.netassetvalue import ValueType
