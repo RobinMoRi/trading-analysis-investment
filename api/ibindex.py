@@ -6,9 +6,13 @@ from requests.utils import quote
 import requests
 import time
 from datetime import datetime
+from sqlalchemy.sql import func
 
 import lxml.html as lh
 import re
+
+from db.models.company import Company as CompanyModel
+from db.models.netassetvalue import NetAssetValue as NAVModel
 
 DATA_PATH = '../data/ib_stocks_stockholm.csv'
 
@@ -114,7 +118,7 @@ def create_asset_values(html_pages, companies):
     return asset_values
 
 # TODO: clean this one up a bit..
-def compute_positions(portfolio_size, asset_values, prices):
+def compute_positions_deprecated(portfolio_size, asset_values, prices):
     prices_dict = convert_prices(prices)
     positions = []
     sums = get_asset_value_sum(asset_values)
@@ -139,6 +143,49 @@ def compute_positions(portfolio_size, asset_values, prices):
 
         positions.append(temp)
     return positions
+
+def compute_positions(db, portfolio_size, asset_values, companies):
+    # prices_dict = convert_prices(prices)
+    
+    computed_rebates_sum = db.query(func.sum(NAVModel.val).filter(
+        NAVModel.value_type == 'computed', NAVModel.asset_type == 'rebate'
+    ).label("val")).first()[0]
+
+    reported_rebates_sum = db.query(func.sum(NAVModel.val).filter(
+        NAVModel.value_type == 'reported', NAVModel.asset_type == 'rebate'
+    ).label("val")).first()[0]
+
+    # computed_rebates_sum = asset_values.filter(
+    #     NAVModel.value_type == 'reported', NAVModel.asset_type == 'rebate'
+    # )
+
+
+    print(reported_rebates_sum, computed_rebates_sum)
+
+
+    # positions = []
+    # sums = get_asset_value_sum(asset_values)
+    # for row in asset_values:
+    #     temp = {'yf_ticker': row['yf_ticker'], 'reported_weight': 0, 'computed_weight': 0, \
+    #             'reported_position': 0, 'computed_position': 0, \
+    #             'reported_buy': 0, 'computed_buy': 0}
+        
+    #     # Compute weights for rabatt type ib's
+    #     if(row['reported_type'] == 'rabatt'):
+    #         temp['reported_weight'] = row['reported_val']/sums['reported_sum']
+    #     if(row['computed_type'] == 'rabatt'):
+    #         temp['computed_weight'] = row['computed_val']/sums['computed_sum']
+
+    #     # compute positions based on weights above
+    #     temp['reported_position'] = temp['reported_weight']*portfolio_size
+    #     temp['computed_position'] = temp['computed_weight']*portfolio_size
+
+    #     # compute number of shares to buy
+    #     temp['reported_buy'] = temp['reported_position']/prices_dict[row['yf_ticker']]
+    #     temp['computed_buy'] = temp['computed_position']/prices_dict[row['yf_ticker']]
+
+    #     positions.append(temp)
+    return []
 
 def get_asset_value_sum(asset_values):
     reported_sum = 0

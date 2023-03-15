@@ -8,14 +8,16 @@ from db.base import Base
 import ibindex, crud
 from schemas.company import Company, CompanyCreate
 from schemas.price import Price
+from schemas.position import Position
 from schemas.assetvalue import AssetValue
 from db.models.netassetvalue import AssetType
 from db.models.netassetvalue import ValueType
+from db.models.company import Company as CompanyModel
+from db.models.netassetvalue import NetAssetValue as NAVModel
 # import models.models as models
 # import schemas.company as companySchema
 # import schemas.price as priceSchema
 # import schemas.assetvalue as assetvalueSchema
-# import schemas.position as positionSchema
 
 Base.metadata.create_all(bind=engine)
 
@@ -87,14 +89,26 @@ def get_asset_values(asset_type: str = '', value_type: str = '', skip: int = 0, 
     asset_values = crud.get_asset_values(db, asset_type=asset_type, value_type=value_type, skip=skip, limit=limit)
     return asset_values
 
+# Read positions (not live data - only since last update)
+@app.get("/companies/positions", response_model=List[Position])
+def get_positions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    positions = crud.get_company_positions(db, skip=skip, limit=limit)
+    return positions
 
-# @app.post("/companies/positions", response_model=List[positionSchema.Position])
-# def update_positions(portfolio_size: int, db: Session = Depends(get_db)):
-#     asset_values = crud.get_asset_values(db)
-#     prices = crud.get_company_prices(db)
-#     positions = ibindex.compute_positions(portfolio_size, asset_values, prices)
-#     crud.update_positions(db, positions)
-#     return positions
+@app.post("/companies/positions", response_model=List[Position])
+def update_positions(portfolio_size: int, db: Session = Depends(get_db)):
+    asset_values_queryset = db.query(NAVModel)
+    company_queryset = db.query(CompanyModel)
+    # asset_values = crud.get_asset_values(db, asset_type='', value_type='')
+    # companies = crud.get_companies(db)
+
+    positionsZ = ibindex.compute_positions(db, portfolio_size, asset_values_queryset, company_queryset)
+    print(positionsZ)
+    # crud.update_company_position(db, positions)
+
+    # Placeholder
+    positions = crud.get_company_positions(db)
+    return positions
 
 # # Read positions (not live data - only since last update)
 # @app.get("/companies/positions", response_model=List[positionSchema.Position])

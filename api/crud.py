@@ -10,6 +10,7 @@ from schemas.company import Company
 from schemas.assetvalue import AssetValueCreate
 from db.models.company import Company as companyModel
 from db.models.netassetvalue import NetAssetValue as navModel
+from db.models.position import Position as positionModel
 
 
 def get_company_by_ticker(db: Session, ticker: str):
@@ -56,6 +57,12 @@ def get_asset_values(db: Session, asset_type: AssetType, value_type: ValueType, 
         queryset = queryset.filter(navModel.value_type == value_type)
 
     return queryset.offset(skip).limit(limit).all()
+
+def update_company_position(db: Session, positions):
+    pass
+
+def get_company_positions(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(positionModel).offset(skip).limit(limit).all()
 
 # def update_positions(db: Session, positions):
 #     for val in positions:
