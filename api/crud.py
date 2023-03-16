@@ -58,8 +58,12 @@ def get_asset_values(db: Session, asset_type: AssetType, value_type: ValueType, 
 
     return queryset.offset(skip).limit(limit).all()
 
-def update_company_position(db: Session, positions):
-    pass
+def update_company_position(db: Session, position):
+    db_positions = positionModel(**position)
+    db.add(db_positions)
+    db.commit()
+    db.refresh(db_positions)
+    return db_positions
 
 def get_company_positions(db: Session, skip: int = 0, limit: int = 100):
     return db.query(positionModel).offset(skip).limit(limit).all()

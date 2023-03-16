@@ -102,13 +102,20 @@ def update_positions(portfolio_size: int, db: Session = Depends(get_db)):
     # asset_values = crud.get_asset_values(db, asset_type='', value_type='')
     # companies = crud.get_companies(db)
 
-    positionsZ = ibindex.compute_positions(db, portfolio_size, asset_values_queryset, company_queryset)
-    print(positionsZ)
-    # crud.update_company_position(db, positions)
+    calculations = ibindex.compute_positions(db, portfolio_size, asset_values_queryset, company_queryset)
+
+    result = []
+    for reported in calculations['reported']:
+        temp = crud.update_company_position(db, reported)
+        result.append(temp)
+    
+    for reported in calculations['computed']:
+        temp = crud.update_company_position(db, reported)
+        result.append(temp)
 
     # Placeholder
-    positions = crud.get_company_positions(db)
-    return positions
+    # positions = crud.get_company_positions(db)
+    return result
 
 # # Read positions (not live data - only since last update)
 # @app.get("/companies/positions", response_model=List[positionSchema.Position])

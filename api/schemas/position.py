@@ -11,3 +11,6 @@ class Position(BaseModel):
 
     class Config:
         orm_mode = True
+
+class PositionCreate(Position):
+    pass

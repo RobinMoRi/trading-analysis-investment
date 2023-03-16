@@ -145,8 +145,6 @@ def compute_positions_deprecated(portfolio_size, asset_values, prices):
     return positions
 
 def compute_positions(db, portfolio_size, asset_values, companies):
-    # prices_dict = convert_prices(prices)
-    
     computed_rebates_sum = db.query(func.sum(NAVModel.val).filter(
         NAVModel.value_type == 'computed', NAVModel.asset_type == 'rebate'
     ).label("val")).first()[0]
@@ -155,37 +153,66 @@ def compute_positions(db, portfolio_size, asset_values, companies):
         NAVModel.value_type == 'reported', NAVModel.asset_type == 'rebate'
     ).label("val")).first()[0]
 
-    # computed_rebates_sum = asset_values.filter(
-    #     NAVModel.value_type == 'reported', NAVModel.asset_type == 'rebate'
-    # )
+
+    computed_rebates = asset_values.filter(
+        NAVModel.value_type == 'computed', NAVModel.asset_type == 'rebate'
+    ).all()
+
+    reported_rebates = asset_values.filter(
+        NAVModel.value_type == 'reported', NAVModel.asset_type == 'rebate'
+    ).all()
+
+    #Compute weights
+    reported = compute_positions_helper(portfolio_size, reported_rebates, companies, reported_rebates_sum, 'reported')
+    computed = compute_positions_helper(portfolio_size, computed_rebates, companies, computed_rebates_sum, 'computed')
+
+    return {'reported': reported, 'computed': computed}
 
 
-    print(reported_rebates_sum, computed_rebates_sum)
+# TODO: probably not how it should be done....
+def compute_positions_helper(portfolio_size, rebates, companies, rebates_sum, value_type):
+    rows = []
+    for rebate in rebates:
+        weight = rebate.val/rebates_sum
+        position = weight*portfolio_size
+        company_price = companies.filter(CompanyModel.id == rebate.company_id).all()[0].price
+        try:
+            buy = position/company_price
+        except:
+            buy = None
+        row = {
+            'weight': weight,
+            'position': position,
+            'buy': buy,
+            'value_type': value_type,
+            'company_id': rebate.company_id,
+            'netassetvalue_id': rebate.id,
+        }
+        rows.append(row)
+    return rows
 
+# positions = []
+# sums = get_asset_value_sum(asset_values)
+# for row in asset_values:
+#     temp = {'yf_ticker': row['yf_ticker'], 'reported_weight': 0, 'computed_weight': 0, \
+#             'reported_position': 0, 'computed_position': 0, \
+#             'reported_buy': 0, 'computed_buy': 0}
+    
+#     # Compute weights for rabatt type ib's
+#     if(row['reported_type'] == 'rabatt'):
+#         temp['reported_weight'] = row['reported_val']/sums['reported_sum']
+#     if(row['computed_type'] == 'rabatt'):
+#         temp['computed_weight'] = row['computed_val']/sums['computed_sum']
 
-    # positions = []
-    # sums = get_asset_value_sum(asset_values)
-    # for row in asset_values:
-    #     temp = {'yf_ticker': row['yf_ticker'], 'reported_weight': 0, 'computed_weight': 0, \
-    #             'reported_position': 0, 'computed_position': 0, \
-    #             'reported_buy': 0, 'computed_buy': 0}
-        
-    #     # Compute weights for rabatt type ib's
-    #     if(row['reported_type'] == 'rabatt'):
-    #         temp['reported_weight'] = row['reported_val']/sums['reported_sum']
-    #     if(row['computed_type'] == 'rabatt'):
-    #         temp['computed_weight'] = row['computed_val']/sums['computed_sum']
+#     # compute positions based on weights above
+#     temp['reported_position'] = temp['reported_weight']*portfolio_size
+#     temp['computed_position'] = temp['computed_weight']*portfolio_size
 
-    #     # compute positions based on weights above
-    #     temp['reported_position'] = temp['reported_weight']*portfolio_size
-    #     temp['computed_position'] = temp['computed_weight']*portfolio_size
+#     # compute number of shares to buy
+#     temp['reported_buy'] = temp['reported_position']/prices_dict[row['yf_ticker']]
+#     temp['computed_buy'] = temp['computed_position']/prices_dict[row['yf_ticker']]
 
-    #     # compute number of shares to buy
-    #     temp['reported_buy'] = temp['reported_position']/prices_dict[row['yf_ticker']]
-    #     temp['computed_buy'] = temp['computed_position']/prices_dict[row['yf_ticker']]
-
-    #     positions.append(temp)
-    return []
+#     positions.append(temp)
 
 def get_asset_value_sum(asset_values):
     reported_sum = 0
