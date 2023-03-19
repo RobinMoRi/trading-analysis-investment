@@ -24,7 +24,6 @@ class NetAssetValue(Base):
     asset_type = Column(Enum(AssetType), unique=False)
     value_type = Column(Enum(ValueType), unique=False)
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
-    position_id = Column(Integer, ForeignKey("positions.id"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
