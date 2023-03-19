@@ -65,6 +65,11 @@ def update_company_position(db: Session, position):
     db.refresh(db_positions)
     return db_positions
 
+def delete_company_position(db: Session):
+    deleted = db.query(positionModel).delete()
+    db.commit()
+    return deleted
+
 def get_company_positions(db: Session, skip: int = 0, limit: int = 100):
     return db.query(positionModel).offset(skip).limit(limit).all()
 

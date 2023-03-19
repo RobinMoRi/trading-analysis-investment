@@ -104,6 +104,8 @@ def update_positions(portfolio_size: int, db: Session = Depends(get_db)):
 
     calculations = ibindex.compute_positions(db, portfolio_size, asset_values_queryset, company_queryset)
 
+    deleted = crud.delete_company_position(db)
+    print(deleted)
     result = []
     for reported in calculations['reported']:
         temp = crud.update_company_position(db, reported)

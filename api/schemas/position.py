@@ -1,13 +1,17 @@
 from pydantic import BaseModel
+from typing import Optional
+from db.models.netassetvalue import ValueType
+from schemas.company import Company
 
 class Position(BaseModel):
-    yf_ticker: str
-    reported_weight: float
-    computed_weight: float
-    reported_position: float
-    computed_position: float
-    reported_buy: float
-    computed_buy: float
+    id: int
+    val: Optional[float] = None
+    weight: float
+    position: float
+    buy: Optional[float] = None
+    value_type: ValueType
+    company_id: int
+    netassetvalue_id: int
 
     class Config:
         orm_mode = True
