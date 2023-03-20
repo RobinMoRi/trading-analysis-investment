@@ -99,8 +99,6 @@ def get_positions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)
 def update_positions(portfolio_size: int, db: Session = Depends(get_db)):
     asset_values_queryset = db.query(NAVModel)
     company_queryset = db.query(CompanyModel)
-    # asset_values = crud.get_asset_values(db, asset_type='', value_type='')
-    # companies = crud.get_companies(db)
 
     calculations = ibindex.compute_positions(db, portfolio_size, asset_values_queryset, company_queryset)
 
@@ -114,25 +112,4 @@ def update_positions(portfolio_size: int, db: Session = Depends(get_db)):
     for reported in calculations['computed']:
         temp = crud.update_company_position(db, reported)
         result.append(temp)
-
-    # Placeholder
-    # positions = crud.get_company_positions(db)
     return result
-
-# # Read positions (not live data - only since last update)
-# @app.get("/companies/positions", response_model=List[positionSchema.Position])
-# def get_positions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#     positions = crud.get_companies(db, skip=skip, limit=limit)
-#     return positions
-
-# # # Compute positions
-# ## Compute weights
-# ## Compute positions
-# ## Compute number of shares to buy
-
-# # @app.post("/companies/positions", response_model=List[assetvalueSchema.AssetValue])
-# # def compute_positions(db: Session = Depends(get_db)):
-# #     companies = crud.get_companies(db)
-# #     asset_values = ibindex.get_asset_values(companies)
-# #     crud.update_asset_values(db, asset_values)
-# #     return asset_values
