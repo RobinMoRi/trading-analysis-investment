@@ -4,6 +4,7 @@ from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 from db.database import SessionLocal, engine
 from db.base import Base
+from fastapi.middleware.cors import CORSMiddleware
 
 import ibindex, crud
 from schemas.company import Company, CompanyCreate
@@ -14,14 +15,25 @@ from db.models.netassetvalue import AssetType
 from db.models.netassetvalue import ValueType
 from db.models.company import Company as CompanyModel
 from db.models.netassetvalue import NetAssetValue as NAVModel
-# import models.models as models
-# import schemas.company as companySchema
-# import schemas.price as priceSchema
-# import schemas.assetvalue as assetvalueSchema
 
 Base.metadata.create_all(bind=engine)
 
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:5173",
+]
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Dependency
 def get_db():
