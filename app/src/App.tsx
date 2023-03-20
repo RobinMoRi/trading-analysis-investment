@@ -1,11 +1,13 @@
-import { useState } from 'react'
-import { Routes, Route } from 'react-router-dom';
-import { ColorModeContext, useMode } from './theme';
-import { CssBaseline, ThemeProvider } from '@mui/material';
-import { ProSidebarProvider } from 'react-pro-sidebar';
+import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import { ColorModeContext, useMode } from "./theme";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { ProSidebarProvider } from "react-pro-sidebar";
 
-import Topbar from './global/Topbar/Topbar';
-import CustomSidebar from './global/CustomSidebar/CustomSidebar';
+import Topbar from "./global/Topbar/Topbar";
+import CustomSidebar from "./global/CustomSidebar/CustomSidebar";
+
+import { Dashboard } from "./pages";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -13,18 +15,21 @@ function App() {
   return (
     <ProSidebarProvider>
       <ColorModeContext.Provider value={colorMode}>
-          <ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
           <CssBaseline />
-            <div className="app">
+          <div className="app">
             <CustomSidebar />
             <main className="content">
-            <Topbar />
+              <Topbar />
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+              </Routes>
             </main>
           </div>
-          </ThemeProvider>
-        </ColorModeContext.Provider>
+        </ThemeProvider>
+      </ColorModeContext.Provider>
     </ProSidebarProvider>
-  )
+  );
 }
 
-export default App
+export default App;
