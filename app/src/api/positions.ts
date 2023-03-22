@@ -16,7 +16,7 @@ export const getPositions = (skip = 0, limit = 100) => {
   );
 };
 
-export const updatePositions = (portfolioSize: number = 0) => {
+export const updatePositions = (portfolioSize: number) => {
   return client.post<Position[]>(
     `/companies/positions/?portfolio_size=${portfolioSize}`
   );

@@ -1,14 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
+import { CircularProgress } from "@mui/material";
 
-import { updatePositions } from "../api";
+import { PositionsTable } from "../components";
 
 export const Dashboard = () => {
-  const init = async () => {
-    const nav = await updatePositions(1000);
-    console.log({ nav });
-  };
-  useEffect(() => {
-    init();
-  }, []);
-  return <div>hejhej</div>;
+  return (
+    <Suspense fallback={<CircularProgress />}>
+      <PositionsTable />
+    </Suspense>
+  );
 };
