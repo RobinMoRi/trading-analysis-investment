@@ -23,13 +23,13 @@ import {
   getPositions,
   updatePositions,
   Position,
+  PositionDeep,
+  getPositionsDeep,
 } from "../../api";
 
 export const PositionsTable = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [companies, setCompanies] = useState<Company[]>();
-  const [netAssetValues, setNetAssetValues] = useState<AssetValue[]>();
-  const [positions, setPositions] = useState<Position[]>();
+  const [positions, setPositions] = useState<PositionDeep[]>();
   const {
     register,
     handleSubmit,
@@ -44,8 +44,6 @@ export const PositionsTable = () => {
     await updateAssetValues();
   };
 
-  console.log({ errors, errorPF: errors.portfolioSize });
-
   const handleUpdatePositions = () => {
     updatePositions(1000)
       .then((res) => console.log(res))
@@ -53,18 +51,12 @@ export const PositionsTable = () => {
   };
 
   const getData = async () => {
-    const companies = await getCompanies();
-    setCompanies(companies.data);
-
-    const nav = await getAssetValues();
-    setNetAssetValues(nav.data);
-
-    const positions = await getPositions();
+    const positions = await getPositionsDeep();
     setPositions(positions.data);
   };
 
   useEffect(() => {
-    // getData();
+    getData();
   }, []);
 
   return (

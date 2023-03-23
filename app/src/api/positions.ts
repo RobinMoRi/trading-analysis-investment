@@ -1,18 +1,31 @@
 import { client } from ".";
+import { Company, AssetValue } from ".";
 
 export type Position = {
-  yf_ticker: string;
-  reported_weight: number;
-  computed_weight: number;
-  reported_position: number;
-  computed_position: number;
-  reported_buy: number;
-  computed_buy: number;
+  id: number;
+  val: number;
+  weight: number;
+  position: number;
+  buy: number;
+  value_type: number;
+  company_id: number;
+  netassetvalue_id: number;
+};
+
+export type PositionDeep = Position & {
+  netassetvalue: AssetValue;
+  company: Company;
 };
 
 export const getPositions = (skip = 0, limit = 100) => {
   return client.get<Position[]>(
     `/companies/positions/?skip=${skip}&limit=${limit}`
+  );
+};
+
+export const getPositionsDeep = (skip = 0, limit = 100) => {
+  return client.get<PositionDeep[]>(
+    `/companies/positions/deep/?skip=${skip}&limit=${limit}`
   );
 };
 
