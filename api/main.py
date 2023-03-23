@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple, Union
 import logging
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
@@ -105,6 +105,14 @@ def get_asset_values(asset_type: str = '', value_type: str = '', skip: int = 0, 
 @app.get("/companies/positions", response_model=List[Position])
 def get_positions(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     positions = crud.get_company_positions(db, skip=skip, limit=limit)
+    return positions
+
+# Read positions with all data
+@app.get("/companies/positions/deep")
+def get_positions_deep(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    positions = crud.get_company_positions_deep(db, skip=skip, limit=limit)
+    for el in positions:
+        print(el, type(el))
     return positions
 
 @app.post("/companies/positions", response_model=List[Position])

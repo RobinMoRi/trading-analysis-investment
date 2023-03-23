@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 from db.models.netassetvalue import ValueType
+from schemas.assetvalue import AssetValue
 from schemas.company import Company
 
 class Position(BaseModel):

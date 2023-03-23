@@ -2,7 +2,7 @@ import logging
 from typing import List
 from db.models.netassetvalue import AssetType
 from db.models.netassetvalue import ValueType
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 # import models.models as models
 from schemas.price import Price
@@ -73,10 +73,6 @@ def delete_company_position(db: Session):
 def get_company_positions(db: Session, skip: int = 0, limit: int = 100):
     return db.query(positionModel).offset(skip).limit(limit).all()
 
-# def update_positions(db: Session, positions):
-#     for val in positions:
-#         db.query(models.Company).filter(models.Company.yf_ticker == val['yf_ticker']). \
-#             update({'reported_weight': val['reported_weight'], 'computed_weight': val['computed_weight'], \
-#                     'reported_position': val['reported_position'], 'computed_position': val['computed_position'], \
-#                     'reported_buy': val['reported_buy'], 'computed_buy': val['computed_buy'] })
-#     db.commit()
+
+def get_company_positions_deep(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(positionModel).options(joinedload(positionModel.netassetvalue)).options(joinedload(positionModel.company)).offset(skip).limit(limit).all()
