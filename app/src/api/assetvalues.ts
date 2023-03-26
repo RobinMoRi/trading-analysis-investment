@@ -3,13 +3,13 @@ import { client } from ".";
 export type ValueType = "reported" | "computed" | "";
 export type AssetType = "rebate" | "premium" | "";
 export enum ValueTypeEnum {
-  REPORTED = "reported",
-  COMPUTED = "computed",
+  REPORTED,
+  COMPUTED,
 }
 
 export enum AssetTypeEnum {
-  REBATE = "rebate",
-  PREMIUM = "premium",
+  REBATE,
+  PREMIUM,
 }
 
 export type AssetValue = {
