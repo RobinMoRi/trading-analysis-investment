@@ -7,7 +7,7 @@ import { ProSidebarProvider } from "react-pro-sidebar";
 import Topbar from "./global/Topbar/Topbar";
 import CustomSidebar from "./global/CustomSidebar/CustomSidebar";
 
-import { Dashboard } from "./pages";
+import { Dashboard, Twitter } from "./pages";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -23,6 +23,7 @@ function App() {
               <Topbar />
               <Routes>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/twitter" element={<Twitter />} />
               </Routes>
             </main>
           </div>
